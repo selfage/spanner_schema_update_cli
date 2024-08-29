@@ -306,4 +306,5 @@ export async function updateSchema(
     await operation.promise();
     console.log(`Updated database ${databaseId} version ${versionId}.`);
   }
+  throw new Error('Stop!!!!')
 }
