@@ -108,11 +108,13 @@ async function execute(): Promise<void> {
       WHERE
         t.table_catalog = ''
         AND t.table_schema = ''
-        AND t.table_name != 'SchemaImage'`,
+        AND t.table_name != 'SchemaImage'
+      ORDER BY
+        1`,
     });
     assertThat(rows.length, eq(2), "Two tables created");
-    assertThat(rows[0].toJSON().table_name, eq("Singers"), "Table Singers");
-    assertThat(rows[1].toJSON().table_name, eq("Albums"), "Table Albums");
+    assertThat(rows[0].toJSON().table_name, eq("Albums"), "Table 0 Albums");
+    assertThat(rows[1].toJSON().table_name, eq("Singers"), "Table 1 Singers");
     [rows] = await databaseClient.run({
       sql: `
       SELECT

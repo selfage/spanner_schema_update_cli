@@ -288,12 +288,12 @@ export async function updateSchema(
     statements.push(`DROP TABLE ${excessiveTable.name}`);
   }
 
-  console.log(`Executing the following statements:\n${statements.join("\n")}`);
   if (statements.length === 0) {
     console.log(
       `Database ${databaseId} version ${versionId} already up-to-date.`,
     );
   } else {
+    console.log(`Executing the following statements:\n${statements.join("\n")}`);
     let [operation] = await databaseAdminClient.updateDatabaseDdl({
       database: databaseAdminClient.databasePath(
         projectId,
