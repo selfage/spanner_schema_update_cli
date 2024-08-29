@@ -130,24 +130,57 @@ export async function updateSchema(
 
   let [rows] = await databaseClient.run({
     sql: `
+      WITH
+        t AS (
+        SELECT
+          t.table_name AS table_name,
+          t.spanner_state AS table_spanner_state,
+          ARRAY_AGG(c.column_name) AS column_names,
+          ARRAY_AGG(c.spanner_state) AS column_spanner_states,
+        FROM
+          information_schema.tables AS t
+        JOIN
+          information_schema.columns AS c
+        ON
+          t.table_name = c.table_name
+        WHERE
+          t.table_catalog = ''
+          AND t.table_schema = ''
+          AND t.table_name != 'SchemaImage'
+        GROUP BY
+          1,
+          2),
+        i AS (
+        SELECT
+          t.table_name,
+          ARRAY_AGG(i.index_name) AS index_names,
+          ARRAY_AGG(i.index_state) AS index_states,
+        FROM
+          information_schema.tables AS t
+        JOIN
+          information_schema.indexes AS i
+        ON
+          t.table_name = i.table_name
+        WHERE
+          t.table_catalog = ''
+          AND t.table_schema = ''
+          AND t.table_name != 'SchemaImage'
+          AND i.index_type = 'INDEX'
+        GROUP BY
+          1)
       SELECT
         t.table_name,
-        t.spanner_state,
-        ARRAY_AGG(c.column_name),
-        ARRAY_AGG(c.spanner_state),
+        t.table_spanner_state,
+        t.column_names,
+        t.column_spanner_states,
+        i.index_names,
+        i.index_states,
       FROM
-        information_schema.tables AS t
-      JOIN
-        information_schema.columns AS c
+        t
+      LEFT JOIN
+        i
       ON
-        t.table_name = c.table_name
-      WHERE
-        t.table_catalog = ''
-        AND t.table_schema = ''
-        AND t.table_name != 'SchemaImage'
-      GROUP BY
-        1,
-        2;`,
+        t.table_name = i.table_name;`,
   });
   let notCommittedErrors = new Array<string>();
   let createdTables = new Map<string, CreatedTable>();
@@ -173,7 +206,7 @@ export async function updateSchema(
     }
 
     let indexes = new Set<string>();
-    if (row.at(4)) {
+    if (row.at(4).value) {
       for (let i = 0; i < row.at(4).value.length; i++) {
         let indexName = row.at(4).value[i];
         let indexState = row.at(5).value[i];
