@@ -89,7 +89,8 @@ async function insertNewSchemaDdlIfNotExists(
     insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
     return 1;
   } else {
-    let latestVersionId = parseInt(rows[0].at(0).value);
+    console.log(typeof rows[0].at(0).value)
+    let latestVersionId = rows[0].at(0).value;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
       insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
