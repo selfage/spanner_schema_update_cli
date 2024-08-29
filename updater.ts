@@ -8,6 +8,7 @@ import {
   deserializeMessage,
   serializeMessage,
 } from "@selfage/message/serializer";
+import { Row } from "@google-cloud/spanner/build/src/partial-result-stream";
 
 enum SchemaState {
   PENDING = 1,
@@ -89,7 +90,9 @@ async function insertNewSchemaDdlIfNotExists(
     insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
     return 1;
   } else {
-    console.log(JSON.stringify(rows[0]))
+    for (let element of rows[0] as Row) {
+      console.log(JSON.stringify(element));
+    }
     let latestVersionId = rows[0].at(0).value;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
@@ -186,7 +189,9 @@ export async function updateSchema(
   let notCommittedErrors = new Array<string>();
   let createdTables = new Map<string, CreatedTable>();
   for (let row of rows) {
-    console.log(JSON.stringify(row));
+    for (let element of row as Row) {
+      console.log(JSON.stringify(element));
+    }
     let tableName = row.at(0).value;
     let tableSpannerState = row.at(1).value;
     if (tableSpannerState !== "COMMITTED") {
