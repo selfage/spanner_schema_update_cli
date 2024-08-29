@@ -7,9 +7,6 @@
     }, {
       "name": "FirstName",
       "ddl": "FirstName STRING(1024)"
-    }, {
-      "name": "LastName",
-      "ddl": "LastName STRING(1024)"
     }],
     "ddl": "PRIMARY KEY (SingerId)"
   }]

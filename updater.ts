@@ -215,7 +215,7 @@ export async function updateSchema(
             `Index ${indexName} is not ready yet. Current state: ${indexState}.`,
           );
         }
-        indexes.add(row.at(3).value[i]);
+        indexes.add(row.at(4).value[i]);
       }
     }
     createdTables.set(tableName, {
