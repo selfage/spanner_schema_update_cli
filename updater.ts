@@ -55,30 +55,26 @@ function insertNewSchemaImage(
       console.error(err);
       return;
     }
-    try {
-      await transction.run({
-        sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
-        params: {
-          versionId: versionId,
-          schema: serializeMessage(schemaDdl, SCHEMA_DDL),
-          state: SchemaState.PENDING,
+    await transction.run({
+      sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
+      params: {
+        versionId: `${versionId}`,
+        schema: serializeMessage(schemaDdl, SCHEMA_DDL),
+        state: `${SchemaState.PENDING}`,
+      },
+      types: {
+        versionId: {
+          type: "int64",
         },
-        types: {
-          versionId: {
-            type: "int64",
-          },
-          schema: {
-            type: "bytes",
-          },
-          state: {
-            type: "int64",
-          },
+        schema: {
+          type: "bytes",
         },
-      });
-      await transction.commit();
-    } catch (err) {
-      console.error(err);
-    }
+        state: {
+          type: "int64",
+        },
+      },
+    });
+    await transction.commit();
     console.log(`Inserted new schema with version ${versionId}.`);
   });
 }
@@ -211,9 +207,7 @@ export async function updateSchema(
     } else {
       for (let column of table.columns) {
         if (!createdTable.columns.has(column.name)) {
-          ddls.push(
-            `ALTER TABLE ${table.name} ADD COLUMN ${column.ddl};`,
-          );
+          ddls.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl};`);
         } else {
           createdTable.columns.delete(column.name);
         }
