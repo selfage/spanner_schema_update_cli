@@ -249,18 +249,6 @@ export async function updateSchema(
         }
       }
     } else {
-      for (let column of table.columns) {
-        if (!createdTable.columns.has(column.name)) {
-          statements.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl}`);
-        } else {
-          createdTable.columns.delete(column.name);
-        }
-      }
-      for (let excessiveColumn of createdTable.columns) {
-        statements.push(
-          `ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn}`,
-        );
-      }
       if (table.indexes) {
         for (let index of table.indexes) {
           if (!createdTable.indexes.has(index.name)) {
@@ -272,6 +260,19 @@ export async function updateSchema(
       }
       for (let excessiveIndex of createdTable.indexes) {
         statements.push(`DROP INDEX ${excessiveIndex}`);
+      }
+
+      for (let column of table.columns) {
+        if (!createdTable.columns.has(column.name)) {
+          statements.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl}`);
+        } else {
+          createdTable.columns.delete(column.name);
+        }
+      }
+      for (let excessiveColumn of createdTable.columns) {
+        statements.push(
+          `ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn}`,
+        );
       }
     }
     createdTables.delete(table.name);
