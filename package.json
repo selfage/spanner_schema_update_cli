@@ -34,7 +34,6 @@
     "@selfage/cli": "^5.0.0",
     "@selfage/generator_cli": "^1.5.0",
     "@selfage/test_matcher": "^2.0.0",
-    "@selfage/test_runner": "^5.0.1",
     "@selfage/tsconfig": "^1.0.7",
     "@types/node": "^22.5.0"
   },
