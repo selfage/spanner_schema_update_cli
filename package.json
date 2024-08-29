@@ -40,6 +40,6 @@
   },
   "dependencies": {
     "@google-cloud/spanner": "^7.14.0",
-    "@selfage/message": "^3.5.0"
+    "@selfage/message": "^3.5.1"
   }
 }

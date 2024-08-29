@@ -192,47 +192,52 @@ export async function updateSchema(
     return;
   }
 
-  let ddls = new Array<string>();
+  let statements = new Array<string>();
   for (let table of newSchemaDdl.tables) {
     let createdTable = createdTables.get(table.name);
     if (!createdTable) {
-      ddls.push(`CREATE TABLE ${table.name} (`);
+      let createTableDdls = new Array<string>();
+      createTableDdls.push(`CREATE TABLE ${table.name} (`);
       for (let column of table.columns) {
-        ddls.push(`${column.ddl},`);
+        createTableDdls.push(`${column.ddl},`);
       }
-      ddls.push(`) ${table.ddl};`);
+      createTableDdls.push(`) ${table.ddl}`);
+      statements.push(createTableDdls.join(""));
+
       for (let index of table.indexes) {
-        ddls.push(`${index.ddl};`);
+        statements.push(index.ddl);
       }
     } else {
       for (let column of table.columns) {
         if (!createdTable.columns.has(column.name)) {
-          ddls.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl};`);
+          statements.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl}`);
         } else {
           createdTable.columns.delete(column.name);
         }
       }
       for (let excessiveColumn of createdTable.columns) {
-        ddls.push(`ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn};`);
+        statements.push(
+          `ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn}`,
+        );
       }
       for (let index of table.indexes) {
         if (!createdTable.indexes.has(index.name)) {
-          ddls.push(`${index.ddl};`);
+          statements.push(index.ddl);
         } else {
           createdTable.indexes.delete(index.name);
         }
       }
       for (let excessiveIndex of createdTable.indexes) {
-        ddls.push(`DROP INDEX ${excessiveIndex};`);
+        statements.push(`DROP INDEX ${excessiveIndex}`);
       }
     }
     createdTables.delete(table.name);
   }
   for (let excessiveTable of createdTables.values()) {
     for (let excessiveIndex of excessiveTable.indexes) {
-      ddls.push(`DROP INDEX ${excessiveIndex};`);
+      statements.push(`DROP INDEX ${excessiveIndex}`);
     }
-    ddls.push(`DROP TABLE ${excessiveTable.name};`);
+    statements.push(`DROP TABLE ${excessiveTable.name}`);
   }
 
   let [operation] = await databaseAdminClient.updateDatabaseDdl({
@@ -241,7 +246,7 @@ export async function updateSchema(
       instanceId,
       databaseId,
     ),
-    statements: [ddls.join("")],
+    statements,
   });
   console.log(`Waiting for updating database ${databaseId} to complete...`);
   await operation.promise();
