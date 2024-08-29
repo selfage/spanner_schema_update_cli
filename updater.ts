@@ -90,13 +90,13 @@ async function insertNewSchemaDdlIfNotExists(
     return 1;
   } else {
     console.log(JSON.stringify(rows[0].at(0).value), JSON.stringify(rows[0].at(1).value))
-    let latestVersionId = rows[0].at(0).value.value;
+    let latestVersionId = rows[0].at(0).value;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
       insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
       return latestVersionId + 1;
     } else {
-      return latestVersionId;
+      return latestVersionId + 0;
     }
   }
 }
