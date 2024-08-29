@@ -89,7 +89,7 @@ async function insertNewSchemaDdlIfNotExists(
     insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
     return 1;
   } else {
-    let latestVersionId = rows[0].at(0).value.valueOf();
+    let latestVersionId = rows[0].at(0).value + 0;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
       insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
@@ -248,15 +248,17 @@ export async function updateSchema(
         }
       }
     } else {
+      let addIndexesStatement = new Array<string>();
       if (table.indexes) {
         for (let index of table.indexes) {
           if (!createdTable.indexes.has(index.name)) {
-            statements.push(index.ddl);
+            addIndexesStatement.push(index.ddl);
           } else {
             createdTable.indexes.delete(index.name);
           }
         }
       }
+      // Drop indexes before dropping columns.
       for (let excessiveIndex of createdTable.indexes) {
         statements.push(`DROP INDEX ${excessiveIndex}`);
       }
@@ -273,6 +275,9 @@ export async function updateSchema(
           `ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn}`,
         );
       }
+
+      // Wait until columns are added before adding indexes.
+      statements.push(...addIndexesStatement);
     }
     createdTables.delete(table.name);
   }
