@@ -30,6 +30,28 @@ TEST_RUNNER.run({
     {
       name: "InitialUpdateToV1_UpdateToV2_RevertToV1",
       execute: async () => {
+        // Execute
+        await updateSchema(
+          PROJECT_ID,
+          INSTANCE_ID,
+          DATABASE_ID,
+          "./test_data/schema_v1.json",
+        );
+        
+        await updateSchema(
+          PROJECT_ID,
+          INSTANCE_ID,
+          DATABASE_ID,
+          "./test_data/schema_v1.json",
+        );
+
+        await updateSchema(
+          PROJECT_ID,
+          INSTANCE_ID,
+          DATABASE_ID,
+          "./test_data/schema_v2.json",
+        );
+
         await updateSchema(
           PROJECT_ID,
           INSTANCE_ID,

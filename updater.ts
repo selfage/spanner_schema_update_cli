@@ -52,8 +52,7 @@ function insertNewSchemaImage(
 ): void {
   databaseClient.runTransaction(async (err, transction) => {
     if (err) {
-      console.error(err);
-      return;
+      throw err;
     }
     await transction.run({
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
@@ -186,10 +185,9 @@ export async function updateSchema(
     });
   }
   if (notCommittedErrors.length > 0) {
-    console.error(
+    throw new Error(
       `Give up updating schema due to existing tables/columns not committed yet.\n${notCommittedErrors.join("\n")}`,
     );
-    return;
   }
 
   let statements = new Array<string>();
@@ -240,15 +238,19 @@ export async function updateSchema(
     statements.push(`DROP TABLE ${excessiveTable.name}`);
   }
 
-  let [operation] = await databaseAdminClient.updateDatabaseDdl({
-    database: databaseAdminClient.databasePath(
-      projectId,
-      instanceId,
-      databaseId,
-    ),
-    statements,
-  });
-  console.log(`Waiting for updating database ${databaseId} to complete...`);
-  await operation.promise();
-  console.log(`Updated database ${databaseId}.`);
+  if (statements.length === 0) {
+    console.log(`Database ${databaseId} already up-to-date.`);
+  } else {
+    let [operation] = await databaseAdminClient.updateDatabaseDdl({
+      database: databaseAdminClient.databasePath(
+        projectId,
+        instanceId,
+        databaseId,
+      ),
+      statements,
+    });
+    console.log(`Waiting for updating database ${databaseId} to complete...`);
+    await operation.promise();
+    console.log(`Updated database ${databaseId}.`);
+  }
 }
