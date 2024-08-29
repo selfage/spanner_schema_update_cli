@@ -95,7 +95,7 @@ async function insertNewSchemaDdlIfNotExists(
       insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
       return latestVersionId + 1;
     } else {
-      return latestVersionId + 0;
+      return latestVersionId;
     }
   }
 }
