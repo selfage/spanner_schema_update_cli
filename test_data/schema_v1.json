@@ -1,0 +1,20 @@
+{
+  "tables": [{
+    "name": "Singers",
+    "columns": [{
+      "name": "SingerId",
+      "ddl": "SingerId INT64 NOT NULL"
+    }, {
+      "name": "FirstName",
+      "ddl": "FirstName STRING(1024)"
+    }, {
+      "name": "LastName",
+      "ddl": "LastName STRING(1024)"
+    }],
+    "ddl": "PRIMARY KEY (SingerId)",
+    "indexes": [{
+      "name": "SingersByFirstName",
+      "ddl": "CREATE INDEX SingersByFirstName ON Singers(FirstName)"
+    }]
+  }]
+}

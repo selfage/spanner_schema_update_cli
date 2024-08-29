@@ -1,0 +1,13 @@
+steps:
+- name: node:20.12.1
+  entrypoint: npm
+  args: ['install']
+- name: node:20.12.1
+  entrypoint: npx
+  args: ['selfage', 'run', 'updater_test']
+  env:
+  - 'PROJECT_ID=${PROJECT_ID}'
+  - 'INSTANCE_ID=${_INSTANCE_ID}'
+  - 'DATABASE_ID=${_DATABASE_ID}'
+options:
+  logging: CLOUD_LOGGING_ONLY

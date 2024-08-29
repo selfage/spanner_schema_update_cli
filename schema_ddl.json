@@ -1,0 +1,54 @@
+[{
+  "name": "TableColumnDdl",
+  "message": {
+    "fields": [{
+      "name": "name",
+      "type": "string"
+    }, {
+      "name": "ddl",
+      "type": "string",
+      "comment": "column_name data_type [ column_expression ] [ options_def ]"
+    }]
+  }
+}, {
+  "name": "IndexDdl",
+  "message": {
+    "fields": [{
+      "name": "name",
+      "type": "string"
+    }, {
+      "name": "ddl",
+      "type": "string",
+      "comment": "CREATE [UNIQUE] INDEX ..."
+    }]
+  }
+}, {
+  "name": "TableDdl",
+  "message": {
+    "fields": [{
+      "name": "name",
+      "type": "string"
+    }, {
+      "name": "columns",
+      "type": "TableColumnDdl",
+      "isArray": true
+    }, {
+      "name": "ddl",
+      "type": "string",
+      "comment": "PRIMARY KEY ( [column_name [ { ASC | DESC } ], ...] ) [ INTERLEAVE IN PARENT table_name ] ..."
+    }, {
+      "name": "indexes",
+      "type": "IndexDdl",
+      "isArray": true
+    }]
+  }
+}, {
+  "name": "SchemaDdl",
+  "message": {
+    "fields": [{
+      "name": "tables",
+      "type": "TableDdl",
+      "isArray": true
+    }]
+  }
+}]

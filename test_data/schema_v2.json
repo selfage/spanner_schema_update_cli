@@ -1,0 +1,40 @@
+{
+  "tables": [{
+    "name": "Singers",
+    "columns": [{
+      "name": "SingerId",
+      "ddl": "SingerId INT64 NOT NULL"
+    }, {
+      "name": "FirstName",
+      "ddl": "FirstName STRING(1024)"
+    }, {
+      "name": "LastName",
+      "ddl": "LastName STRING(1024)"
+    }],
+    "ddl": "PRIMARY KEY (SingerId)",
+    "indexes": [{
+      "name": "SingersByFirstName",
+      "ddl": "CREATE INDEX SingersByFirstName ON Singers(FirstName)"
+    }, {
+      "name": "SingersByLastName",
+      "ddl": "CREATE INDEX SingersByLastName ON Singers(LastName)"
+    }]
+  }, {
+    "name": "Albums",
+    "columns": [{
+      "name": "SingerId",
+      "ddl": "SingerId INT64 NOT NULL"
+    }, {
+      "name": "AlbumId",
+      "ddl": "AlbumId INT64 NOT NULL"
+    }, {
+      "name": "AlbumTitle",
+      "ddl": "AlbumTitle STRING(MAX)"
+    }],
+    "ddl": "PRIMARY KEY (SingerId, AlbumId)",
+    "indexes": [{
+      "name": "AlbumsByTitle",
+      "ddl": "CREATE INDEX AlbumsByTitle ON Albums(AlbumTitle)"
+    }]
+  }]
+}
