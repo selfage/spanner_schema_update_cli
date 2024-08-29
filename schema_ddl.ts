@@ -12,10 +12,12 @@ export let TABLE_COLUMN_DDL: MessageDescriptor<TableColumnDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
+      index: 1
     },
     {
       name: 'ddl',
       primitiveType: PrimitiveType.STRING,
+      index: 2
     },
   ]
 };
@@ -32,10 +34,12 @@ export let INDEX_DDL: MessageDescriptor<IndexDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
+      index: 1
     },
     {
       name: 'ddl',
       primitiveType: PrimitiveType.STRING,
+      index: 2
     },
   ]
 };
@@ -54,20 +58,24 @@ export let TABLE_DDL: MessageDescriptor<TableDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
+      index: 1
     },
     {
       name: 'columns',
       messageType: TABLE_COLUMN_DDL,
       isArray: true,
+      index: 2
     },
     {
       name: 'ddl',
       primitiveType: PrimitiveType.STRING,
+      index: 3
     },
     {
       name: 'indexes',
       messageType: INDEX_DDL,
       isArray: true,
+      index: 4
     },
   ]
 };
@@ -83,6 +91,7 @@ export let SCHEMA_DDL: MessageDescriptor<SchemaDdl> = {
       name: 'tables',
       messageType: TABLE_DDL,
       isArray: true,
+      index: 1
     },
   ]
 };

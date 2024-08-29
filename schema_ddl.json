@@ -3,10 +3,12 @@
   "message": {
     "fields": [{
       "name": "name",
-      "type": "string"
+      "type": "string",
+      "index": 1
     }, {
       "name": "ddl",
       "type": "string",
+      "index": 2,
       "comment": "column_name data_type [ column_expression ] [ options_def ]"
     }]
   }
@@ -15,10 +17,12 @@
   "message": {
     "fields": [{
       "name": "name",
-      "type": "string"
+      "type": "string",
+      "index": 1
     }, {
       "name": "ddl",
       "type": "string",
+      "index": 2,
       "comment": "CREATE [UNIQUE] INDEX ..."
     }]
   }
@@ -27,19 +31,23 @@
   "message": {
     "fields": [{
       "name": "name",
-      "type": "string"
+      "type": "string",
+      "index": 1
     }, {
       "name": "columns",
       "type": "TableColumnDdl",
-      "isArray": true
+      "isArray": true,
+      "index": 2
     }, {
       "name": "ddl",
       "type": "string",
+      "index": 3,
       "comment": "PRIMARY KEY ( [column_name [ { ASC | DESC } ], ...] ) [ INTERLEAVE IN PARENT table_name ] ..."
     }, {
       "name": "indexes",
       "type": "IndexDdl",
-      "isArray": true
+      "isArray": true,
+      "index": 4
     }]
   }
 }, {
@@ -48,7 +56,8 @@
     "fields": [{
       "name": "tables",
       "type": "TableDdl",
-      "isArray": true
+      "isArray": true,
+      "index": 1
     }]
   }
 }]
