@@ -11,10 +11,6 @@
       "name": "LastName",
       "ddl": "LastName STRING(1024)"
     }],
-    "ddl": "PRIMARY KEY (SingerId)",
-    "indexes": [{
-      "name": "SingersByFirstName",
-      "ddl": "CREATE INDEX SingersByFirstName ON Singers(FirstName)"
-    }]
+    "ddl": "PRIMARY KEY (SingerId)"
   }]
 }
