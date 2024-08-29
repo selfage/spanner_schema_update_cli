@@ -272,9 +272,9 @@ async function runTest(): Promise<void> {
   try {
     await execute();
   } finally {
-    // await DATABASE_ADMIN_CLIENT.dropDatabase({
-    //   database: DATABASE_ID,
-    // });
+    await DATABASE_ADMIN_CLIENT.dropDatabase({
+      database: DATABASE_ID,
+    });
   }
 }
 
