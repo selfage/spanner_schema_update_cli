@@ -81,17 +81,21 @@ function insertNewSchemaImage(
 async function insertNewSchemaDdlIfNotExists(
   databaseClient: Database,
   newSchemaDdl: SchemaDdl,
-): Promise<void> {
+): Promise<number> {
   let [rows] = await databaseClient.run({
     sql: `SELECT versionId, schema FROM SchemaImage ORDER BY versionId DESC LIMIT 1;`,
   });
   if (rows.length === 0) {
     insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
+    return 1;
   } else {
     let latestVersionId = rows[0].at(0).value;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
       insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
+      return latestVersionId + 1;
+    } else {
+      return latestVersionId;
     }
   }
 }
@@ -119,7 +123,10 @@ export async function updateSchema(
   );
   let instance = spanner.instance(instanceId);
   let databaseClient = instance.database(databaseId);
-  await insertNewSchemaDdlIfNotExists(databaseClient, newSchemaDdl);
+  let versionId = await insertNewSchemaDdlIfNotExists(
+    databaseClient,
+    newSchemaDdl,
+  );
 
   let [rows] = await databaseClient.run({
     sql: `
@@ -239,7 +246,9 @@ export async function updateSchema(
   }
 
   if (statements.length === 0) {
-    console.log(`Database ${databaseId} already up-to-date.`);
+    console.log(
+      `Database ${databaseId} version ${versionId} already up-to-date.`,
+    );
   } else {
     let [operation] = await databaseAdminClient.updateDatabaseDdl({
       database: databaseAdminClient.databasePath(
@@ -251,6 +260,6 @@ export async function updateSchema(
     });
     console.log(`Waiting for updating database ${databaseId} to complete...`);
     await operation.promise();
-    console.log(`Updated database ${databaseId}.`);
+    console.log(`Updated database ${databaseId} version ${versionId}.`);
   }
 }
