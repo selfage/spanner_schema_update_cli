@@ -242,8 +242,10 @@ export async function updateSchema(
       createTableDdls.push(`) ${table.ddl}`);
       statements.push(createTableDdls.join(""));
 
-      for (let index of table.indexes) {
-        statements.push(index.ddl);
+      if (table.indexes) {
+        for (let index of table.indexes) {
+          statements.push(index.ddl);
+        }
       }
     } else {
       for (let column of table.columns) {
@@ -258,11 +260,13 @@ export async function updateSchema(
           `ALTER TABLE ${table.name} DROP COLUMN ${excessiveColumn}`,
         );
       }
-      for (let index of table.indexes) {
-        if (!createdTable.indexes.has(index.name)) {
-          statements.push(index.ddl);
-        } else {
-          createdTable.indexes.delete(index.name);
+      if (table.indexes) {
+        for (let index of table.indexes) {
+          if (!createdTable.indexes.has(index.name)) {
+            statements.push(index.ddl);
+          } else {
+            createdTable.indexes.delete(index.name);
+          }
         }
       }
       for (let excessiveIndex of createdTable.indexes) {
