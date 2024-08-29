@@ -247,7 +247,7 @@ export async function updateSchema(
       instanceId,
       databaseId,
     ),
-    statements: ddls,
+    statements: [ddls.join("")],
   });
   console.log(`Waiting for updating database ${databaseId} to complete...`);
   await operation.promise();
