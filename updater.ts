@@ -59,7 +59,7 @@ function insertNewSchemaImage(
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
       params: {
         versionId: `${versionId}`,
-        schema: serializeMessage(schemaDdl, SCHEMA_DDL),
+        schema: Buffer.from(serializeMessage(schemaDdl, SCHEMA_DDL)),
         state: `${SchemaState.PENDING}`,
       },
       types: {
