@@ -50,8 +50,7 @@ async function execute(): Promise<void> {
         AND t.table_schema = ''
         AND t.table_name != 'SchemaImage'
       GROUP BY
-        1,
-        2`,
+        1`,
     });
     assertThat(rows.length, eq(1), "One table created");
     let table = rows[0].toJSON();
