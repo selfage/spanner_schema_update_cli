@@ -173,7 +173,7 @@ export async function updateSchema(
     }
 
     let indexes = new Set<string>();
-    if (!row.at(4).value) {
+    if (row.at(4)) {
       for (let i = 0; i < row.at(4).value.length; i++) {
         let indexName = row.at(4).value[i];
         let indexState = row.at(5).value[i];
