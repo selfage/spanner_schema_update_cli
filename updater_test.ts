@@ -273,7 +273,11 @@ async function runTest(): Promise<void> {
     await execute();
   } finally {
     await DATABASE_ADMIN_CLIENT.dropDatabase({
-      database: DATABASE_ID,
+      database: DATABASE_ADMIN_CLIENT.databasePath(
+        PROJECT_ID,
+        INSTANCE_ID,
+        DATABASE_ID,
+      ),
     });
   }
 }
