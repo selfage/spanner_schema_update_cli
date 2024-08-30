@@ -307,30 +307,30 @@ export async function updateSchema(
     console.log(`Waiting for updating database ${databaseId} to complete...`);
     await operation.promise();
     console.log(`Updated database ${databaseId} version ${versionId}.`);
-  }
 
-  databaseClient.runTransaction(async (err, transction) => {
-    if (err) {
-      throw err;
-    }
-    await transction.run({
-      sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
-      params: {
-        versionId: `${versionId}`,
-        state: `${SchemaState.DONE}`,
-      },
-      types: {
-        versionId: {
-          type: "int64",
+    databaseClient.runTransaction(async (err, transction) => {
+      if (err) {
+        throw err;
+      }
+      await transction.run({
+        sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
+        params: {
+          versionId: `${versionId}`,
+          state: `${SchemaState.DONE}`,
         },
-        state: {
-          type: "int64",
+        types: {
+          versionId: {
+            type: "int64",
+          },
+          state: {
+            type: "int64",
+          },
         },
-      },
+      });
+      await transction.commit();
+      console.log(
+        `Marked database ${databaseId} version ${versionId} update done.`,
+      );
     });
-    await transction.commit();
-    console.log(
-      `Marked database ${databaseId} version ${versionId} update done.`,
-    );
-  });
+  }
 }
