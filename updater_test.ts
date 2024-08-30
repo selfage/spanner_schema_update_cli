@@ -1,4 +1,4 @@
-import { updateSchema } from "./updater";
+import { SchemaState, updateSchema } from "./updater";
 import { Spanner } from "@google-cloud/spanner";
 import { assertThat, eq, isArray } from "@selfage/test_matcher";
 
@@ -28,11 +28,21 @@ async function execute(): Promise<void> {
     let [rows] = await databaseClient.run({
       sql: `
       SELECT
-        s.versionId AS versionId,
+        versionId,
+        state,
       FROM
-        SchemaImage AS s`,
+        SchemaImage
+      ORDER BY
+        versionId DESC
+      LIMIT 1`,
     });
-    assertThat(rows[0].toJSON().versionId, eq(1), "Schema V1");
+    let schemaImage = rows[0].toJSON();
+    assertThat(schemaImage.versionId, eq(1), "Schema V1");
+    assertThat(
+      schemaImage.state,
+      eq(SchemaState.DONE),
+      "Schema V1 update done",
+    );
 
     [rows] = await databaseClient.run({
       sql: `
@@ -71,14 +81,20 @@ async function execute(): Promise<void> {
   );
 
   // Verify no update
-  let [rows] = await databaseClient.run({
-    sql: `
-    SELECT
-      s.versionId AS versionId,
-    FROM
-      SchemaImage AS s`,
-  });
-  assertThat(rows[0].toJSON().versionId, eq(1), "Still Schema V1");
+  {
+    let [rows] = await databaseClient.run({
+      sql: `
+      SELECT
+        versionId,
+        state,
+      FROM
+        SchemaImage
+      ORDER BY
+        versionId DESC
+      LIMIT 1`,
+    });
+    assertThat(rows[0].toJSON().versionId, eq(1), "Still Schema V1");
+  }
 
   // Execute
   await updateSchema(
@@ -93,11 +109,21 @@ async function execute(): Promise<void> {
     let [rows] = await databaseClient.run({
       sql: `
       SELECT
-        s.versionId AS versionId,
+        versionId,
+        state,
       FROM
-        SchemaImage AS s`,
+        SchemaImage
+      ORDER BY
+        versionId DESC
+      LIMIT 1`,
     });
-    assertThat(rows[0].toJSON().versionId, eq(1), "Schema V2");
+    let schemaImage = rows[0].toJSON();
+    assertThat(schemaImage.versionId, eq(2), "Schema V2");
+    assertThat(
+      schemaImage.state,
+      eq(SchemaState.DONE),
+      "Schema V2 update done",
+    );
 
     [rows] = await databaseClient.run({
       sql: `
@@ -203,11 +229,21 @@ async function execute(): Promise<void> {
     let [rows] = await databaseClient.run({
       sql: `
       SELECT
-        s.versionId AS versionId,
+        versionId,
+        state,
       FROM
-        SchemaImage AS s`,
+        SchemaImage
+      ORDER BY
+        versionId DESC
+      LIMIT 1`,
     });
-    assertThat(rows[0].toJSON().versionId, eq(1), "Schema V3");
+    let schemaImage = rows[0].toJSON();
+    assertThat(schemaImage.versionId, eq(3), "Schema V3");
+    assertThat(
+      schemaImage.state,
+      eq(SchemaState.DONE),
+      "Schema V3 update done",
+    );
 
     [rows] = await databaseClient.run({
       sql: `

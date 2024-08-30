@@ -9,9 +9,9 @@ import {
   serializeMessage,
 } from "@selfage/message/serializer";
 
-enum SchemaState {
+export enum SchemaState {
   PENDING = 1,
-  UPDATED = 2,
+  DONE = 2,
 }
 
 interface CreatedTable {
@@ -293,7 +293,9 @@ export async function updateSchema(
       `Database ${databaseId} version ${versionId} already up-to-date.`,
     );
   } else {
-    console.log(`Executing the following statements:\n${statements.join("\n")}`);
+    console.log(
+      `Executing the following statements:\n${statements.join("\n")}`,
+    );
     let [operation] = await databaseAdminClient.updateDatabaseDdl({
       database: databaseAdminClient.databasePath(
         projectId,
@@ -306,4 +308,29 @@ export async function updateSchema(
     await operation.promise();
     console.log(`Updated database ${databaseId} version ${versionId}.`);
   }
+
+  databaseClient.runTransaction(async (err, transction) => {
+    if (err) {
+      throw err;
+    }
+    await transction.run({
+      sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
+      params: {
+        versionId: `${versionId}`,
+        state: `${SchemaState.DONE}`,
+      },
+      types: {
+        versionId: {
+          type: "int64",
+        },
+        state: {
+          type: "int64",
+        },
+      },
+    });
+    await transction.commit();
+    console.log(
+      `Marked database ${databaseId} version ${versionId} update done.`,
+    );
+  });
 }
