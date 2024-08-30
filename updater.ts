@@ -45,15 +45,12 @@ async function createSchemaImageTableIfNotExists(
   console.log(`Created table SchemaImage.`);
 }
 
-function insertNewSchemaImage(
+async function insertNewSchemaImage(
   databaseClient: Database,
   versionId: number,
   schemaDdl: SchemaDdl,
-): void {
-  databaseClient.runTransaction(async (err, transction) => {
-    if (err) {
-      throw err;
-    }
+): Promise<void> {
+  await databaseClient.runTransactionAsync(async (transction) => {
     await transction.run({
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
       params: {
@@ -86,13 +83,17 @@ async function insertNewSchemaDdlIfNotExists(
     sql: `SELECT versionId, schema FROM SchemaImage ORDER BY versionId DESC LIMIT 1;`,
   });
   if (rows.length === 0) {
-    insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
+    await insertNewSchemaImage(databaseClient, 1, newSchemaDdl);
     return 1;
   } else {
     let latestVersionId = rows[0].at(0).value + 0;
     let latestSchemaDdl = deserializeMessage(rows[0].at(1).value, SCHEMA_DDL);
     if (!equalMessage(latestSchemaDdl, newSchemaDdl, SCHEMA_DDL)) {
-      insertNewSchemaImage(databaseClient, latestVersionId + 1, newSchemaDdl);
+      await insertNewSchemaImage(
+        databaseClient,
+        latestVersionId + 1,
+        newSchemaDdl,
+      );
       return latestVersionId + 1;
     } else {
       return latestVersionId;
@@ -308,10 +309,7 @@ export async function updateSchema(
     await operation.promise();
     console.log(`Updated database ${databaseId} version ${versionId}.`);
 
-    databaseClient.runTransaction(async (err, transction) => {
-      if (err) {
-        throw err;
-      }
+    await databaseClient.runTransactionAsync(async (transction) => {
       await transction.run({
         sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
         params: {
