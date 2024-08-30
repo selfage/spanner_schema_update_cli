@@ -308,13 +308,13 @@ async function runTest(): Promise<void> {
   try {
     await execute();
   } finally {
-    // await DATABASE_ADMIN_CLIENT.dropDatabase({
-    //   database: DATABASE_ADMIN_CLIENT.databasePath(
-    //     PROJECT_ID,
-    //     INSTANCE_ID,
-    //     DATABASE_ID,
-    //   ),
-    // });
+    await DATABASE_ADMIN_CLIENT.dropDatabase({
+      database: DATABASE_ADMIN_CLIENT.databasePath(
+        PROJECT_ID,
+        INSTANCE_ID,
+        DATABASE_ID,
+      ),
+    });
   }
 }
 
