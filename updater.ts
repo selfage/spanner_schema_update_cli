@@ -54,9 +54,9 @@ async function insertNewSchemaImage(
     await transction.run({
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
       params: {
-        versionId: versionId,
+        versionId: Spanner.float(versionId),
         schema: Buffer.from(serializeMessage(schemaDdl, SCHEMA_DDL)),
-        state: SchemaState.PENDING,
+        state: Spanner.float(SchemaState.PENDING),
       },
       types: {
         versionId: {
@@ -110,8 +110,8 @@ export async function markSchemaImageUpdateDone(
     await transction.run({
       sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
       params: {
-        versionId: versionId,
-        state: SchemaState.DONE,
+        versionId: Spanner.float(versionId),
+        state: Spanner.float(SchemaState.DONE),
       },
       types: {
         versionId: {
