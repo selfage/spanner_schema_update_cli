@@ -3,7 +3,7 @@
     "name": "Singers",
     "columns": [{
       "name": "SingerId",
-      "addColumnDdl": "ALTER TABLE Singers ADD COLUMN Singers INT64 NOT NULL"
+      "addColumnDdl": "ALTER TABLE Singers ADD COLUMN SingerId INT64 NOT NULL"
     }, {
       "name": "FirstName",
       "addColumnDdl": "ALTER TABLE Singers ADD COLUMN FirstName STRING(1024)"
@@ -11,7 +11,7 @@
       "name": "LastName",
       "addColumnDdl": "ALTER TABLE Singers ADD COLUMN LastName STRING(1024)"
     }],
-    "createTableDdl": "CREATE TABLE Singers (Singers INT64 NOT NULL, FirstName STRING(1024),) PRIMARY KEY (SingerId)",
+    "createTableDdl": "CREATE TABLE Singers (SingerId INT64 NOT NULL, FirstName STRING(1024),) PRIMARY KEY (SingerId)",
     "indexes": [{
       "name": "SingersByFirstName",
       "createIndexDdl": "CREATE INDEX SingersByFirstName ON Singers(FirstName)"
