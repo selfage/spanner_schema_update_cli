@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 import fs = require("fs");
 import path = require("path");
+import { updateSchemaFromDdlFile } from "./updater";
 import { Command } from "commander";
-import { updateSchema } from "./updater";
+
+function stripFileExtension(file: string): string {
+  let pathObj = path.parse(file);
+  pathObj.base = undefined;
+  pathObj.ext = undefined;
+  return path.format(pathObj);
+}
 
 async function main(): Promise<void> {
   let packageConfig = JSON.parse(
@@ -16,26 +23,20 @@ async function main(): Promise<void> {
     .command("update <ddlFile>")
     .alias("srl")
     .description(
-      `Update Spanner database schema from a generated DDL file.`,
+      `Update Spanner database schema from a generated DDL JSON file.`,
     )
-    .requiredOption(
-      "-p, --project-id <id>",
-      `The GCP project id.`,
-    )
-    .requiredOption(
-      "-i, --instance-id <id>",
-      `The Spanner instance id.`,
-    )
+    .requiredOption("-p, --project-id <id>", `The GCP project id.`)
+    .requiredOption("-i, --instance-id <id>", `The Spanner instance id.`)
     .requiredOption(
       "-d, --database-id <id>",
       `The spanner database id inside the Spanner instance.`,
     )
     .action((ddlFile, options) =>
-      updateSchema(
+      updateSchemaFromDdlFile(
         options.projectId,
         options.instanceId,
         options.databaseId,
-        ddlFile
+        stripFileExtension(ddlFile) + ".json",
       ),
     );
   await program.parseAsync();

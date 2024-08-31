@@ -3,11 +3,11 @@
     "name": "Singers",
     "columns": [{
       "name": "SingerId",
-      "ddl": "SingerId INT64 NOT NULL"
+      "addColumnDdl": "ALTER TABLE Singers ADD COLUMN Singers INT64 NOT NULL"
     }, {
       "name": "FirstName",
-      "ddl": "FirstName STRING(1024)"
+      "addColumnDdl": "ALTER TABLE Singers ADD COLUMN FirstName STRING(1024)"
     }],
-    "ddl": "PRIMARY KEY (SingerId)"
+    "createTableDdl": "CREATE TABLE Singers (Singers INT64 NOT NULL, FirstName STRING(1024),) PRIMARY KEY (SingerId)"
   }]
 }

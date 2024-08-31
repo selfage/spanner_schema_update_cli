@@ -1,4 +1,4 @@
-import { SchemaState, updateSchema } from "./updater";
+import { SchemaState, updateSchemaFromDdlFile } from "./updater";
 import { Spanner } from "@google-cloud/spanner";
 import { assertThat, eq, isArray } from "@selfage/test_matcher";
 
@@ -16,11 +16,11 @@ async function execute(): Promise<void> {
   let databaseClient = instance.database(DATABASE_ID);
 
   // Execute
-  await updateSchema(
+  await updateSchemaFromDdlFile(
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1.json",
+    "./test_data/schema_v1",
   );
 
   // Verify
@@ -73,11 +73,11 @@ async function execute(): Promise<void> {
   }
 
   // Execute
-  await updateSchema(
+  await updateSchemaFromDdlFile(
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1.json",
+    "./test_data/schema_v1",
   );
 
   // Verify no update
@@ -97,11 +97,11 @@ async function execute(): Promise<void> {
   }
 
   // Execute
-  await updateSchema(
+  await updateSchemaFromDdlFile(
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v2.json",
+    "./test_data/schema_v2",
   );
 
   // Verify
@@ -217,11 +217,11 @@ async function execute(): Promise<void> {
   }
 
   // Execute
-  await updateSchema(
+  await updateSchemaFromDdlFile(
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1.json",
+    "./test_data/schema_v1",
   );
 
   // Verify

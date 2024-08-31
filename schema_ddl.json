@@ -6,10 +6,10 @@
       "type": "string",
       "index": 1
     }, {
-      "name": "ddl",
+      "name": "addColumnDdl",
       "type": "string",
       "index": 2,
-      "comment": "column_name data_type [ column_expression ] [ options_def ]"
+      "comment": "ALTER TABLE table_name ADD COLUMN column_name ..."
     }]
   }
 }, {
@@ -20,10 +20,10 @@
       "type": "string",
       "index": 1
     }, {
-      "name": "ddl",
+      "name": "createIndexDdl",
       "type": "string",
       "index": 2,
-      "comment": "CREATE [UNIQUE] INDEX ..."
+      "comment": "CREATE INDEX index_name ON table_name ..."
     }]
   }
 }, {
@@ -39,10 +39,10 @@
       "isArray": true,
       "index": 2
     }, {
-      "name": "ddl",
+      "name": "createTableDdl",
       "type": "string",
       "index": 3,
-      "comment": "PRIMARY KEY ( [column_name [ { ASC | DESC } ], ...] ) [ INTERLEAVE IN PARENT table_name ] ..."
+      "comment": "CREATE TABLE table_name (columns...) PRIMARY KEY (keys...)"
     }, {
       "name": "indexes",
       "type": "IndexDdl",

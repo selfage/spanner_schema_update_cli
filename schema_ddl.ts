@@ -2,8 +2,8 @@ import { MessageDescriptor, PrimitiveType } from '@selfage/message/descriptor';
 
 export interface TableColumnDdl {
   name?: string,
-/* column_name data_type [ column_expression ] [ options_def ] */
-  ddl?: string,
+/* ALTER TABLE table_name ADD COLUMN column_name ... */
+  addColumnDdl?: string,
 }
 
 export let TABLE_COLUMN_DDL: MessageDescriptor<TableColumnDdl> = {
@@ -12,20 +12,20 @@ export let TABLE_COLUMN_DDL: MessageDescriptor<TableColumnDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
-      index: 1
+      index: 1,
     },
     {
-      name: 'ddl',
+      name: 'addColumnDdl',
       primitiveType: PrimitiveType.STRING,
-      index: 2
+      index: 2,
     },
   ]
 };
 
 export interface IndexDdl {
   name?: string,
-/* CREATE [UNIQUE] INDEX ... */
-  ddl?: string,
+/* CREATE INDEX index_name ON table_name ... */
+  createIndexDdl?: string,
 }
 
 export let INDEX_DDL: MessageDescriptor<IndexDdl> = {
@@ -34,12 +34,12 @@ export let INDEX_DDL: MessageDescriptor<IndexDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
-      index: 1
+      index: 1,
     },
     {
-      name: 'ddl',
+      name: 'createIndexDdl',
       primitiveType: PrimitiveType.STRING,
-      index: 2
+      index: 2,
     },
   ]
 };
@@ -47,8 +47,8 @@ export let INDEX_DDL: MessageDescriptor<IndexDdl> = {
 export interface TableDdl {
   name?: string,
   columns?: Array<TableColumnDdl>,
-/* PRIMARY KEY ( [column_name [ { ASC | DESC } ], ...] ) [ INTERLEAVE IN PARENT table_name ] ... */
-  ddl?: string,
+/* CREATE TABLE table_name (columns...) PRIMARY KEY (keys...) */
+  createTableDdl?: string,
   indexes?: Array<IndexDdl>,
 }
 
@@ -58,24 +58,24 @@ export let TABLE_DDL: MessageDescriptor<TableDdl> = {
     {
       name: 'name',
       primitiveType: PrimitiveType.STRING,
-      index: 1
+      index: 1,
     },
     {
       name: 'columns',
       messageType: TABLE_COLUMN_DDL,
       isArray: true,
-      index: 2
+      index: 2,
     },
     {
-      name: 'ddl',
+      name: 'createTableDdl',
       primitiveType: PrimitiveType.STRING,
-      index: 3
+      index: 3,
     },
     {
       name: 'indexes',
       messageType: INDEX_DDL,
       isArray: true,
-      index: 4
+      index: 4,
     },
   ]
 };
@@ -91,7 +91,7 @@ export let SCHEMA_DDL: MessageDescriptor<SchemaDdl> = {
       name: 'tables',
       messageType: TABLE_DDL,
       isArray: true,
-      index: 1
+      index: 1,
     },
   ]
 };

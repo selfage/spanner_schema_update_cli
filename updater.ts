@@ -28,9 +28,9 @@ async function createSchemaImageTableIfNotExists(
 ): Promise<void> {
   let createSchemaImageTable = `
   CREATE TABLE IF NOT EXISTS SchemaImage (
-    versionId INT64 NOT NULL,
+    versionId FLOAT64 NOT NULL,
     schema BYTES(MAX) NOT NULL,
-    state INT64 NOT NULL,
+    state FLOAT64 NOT NULL,
   ) PRIMARY KEY(versionId)`;
   let [operation] = await databaseAdminClient.updateDatabaseDdl({
     database: databaseAdminClient.databasePath(
@@ -54,19 +54,19 @@ async function insertNewSchemaImage(
     await transction.run({
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
       params: {
-        versionId: `${versionId}`,
+        versionId: versionId,
         schema: Buffer.from(serializeMessage(schemaDdl, SCHEMA_DDL)),
-        state: `${SchemaState.PENDING}`,
+        state: SchemaState.PENDING,
       },
       types: {
         versionId: {
-          type: "int64",
+          type: "float64",
         },
         schema: {
           type: "bytes",
         },
         state: {
-          type: "int64",
+          type: "float64",
         },
       },
     });
@@ -101,11 +101,52 @@ async function insertNewSchemaDdlIfNotExists(
   }
 }
 
-export async function updateSchema(
+export async function markSchemaImageUpdateDone(
+  databaseClient: Database,
+  databaseId: string,
+  versionId: number,
+): Promise<void> {
+  await databaseClient.runTransactionAsync(async (transction) => {
+    await transction.run({
+      sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
+      params: {
+        versionId: versionId,
+        state: SchemaState.DONE,
+      },
+      types: {
+        versionId: {
+          type: "float64",
+        },
+        state: {
+          type: "float64",
+        },
+      },
+    });
+    await transction.commit();
+    console.log(
+      `Marked database ${databaseId} version ${versionId} update done.`,
+    );
+  });
+}
+
+export async function updateSchemaFromDdlFile(
   projectId: string,
   instanceId: string,
   databaseId: string,
   ddlFile: string,
+): Promise<void> {
+  let newSchemaDdl = parseMessage(
+    JSON.parse(fs.readFileSync(ddlFile).toString()),
+    SCHEMA_DDL,
+  );
+  await updateSchema(projectId, instanceId, databaseId, newSchemaDdl);
+}
+
+export async function updateSchema(
+  projectId: string,
+  instanceId: string,
+  databaseId: string,
+  newSchemaDdl: SchemaDdl,
 ): Promise<void> {
   let spanner = new Spanner({
     projectId,
@@ -118,10 +159,6 @@ export async function updateSchema(
     databaseId,
   );
 
-  let newSchemaDdl = parseMessage(
-    JSON.parse(fs.readFileSync(ddlFile).toString()),
-    SCHEMA_DDL,
-  );
   let instance = spanner.instance(instanceId);
   let databaseClient = instance.database(databaseId);
   let versionId = await insertNewSchemaDdlIfNotExists(
@@ -235,17 +272,10 @@ export async function updateSchema(
   for (let table of newSchemaDdl.tables) {
     let createdTable = createdTables.get(table.name);
     if (!createdTable) {
-      let createTableDdls = new Array<string>();
-      createTableDdls.push(`CREATE TABLE ${table.name} (`);
-      for (let column of table.columns) {
-        createTableDdls.push(`${column.ddl},`);
-      }
-      createTableDdls.push(`) ${table.ddl}`);
-      statements.push(createTableDdls.join(""));
-
+      statements.push(table.createTableDdl);
       if (table.indexes) {
         for (let index of table.indexes) {
-          statements.push(index.ddl);
+          statements.push(index.createIndexDdl);
         }
       }
     } else {
@@ -253,7 +283,7 @@ export async function updateSchema(
       if (table.indexes) {
         for (let index of table.indexes) {
           if (!createdTable.indexes.has(index.name)) {
-            addIndexesStatement.push(index.ddl);
+            addIndexesStatement.push(index.createIndexDdl);
           } else {
             createdTable.indexes.delete(index.name);
           }
@@ -266,7 +296,7 @@ export async function updateSchema(
 
       for (let column of table.columns) {
         if (!createdTable.columns.has(column.name)) {
-          statements.push(`ALTER TABLE ${table.name} ADD COLUMN ${column.ddl}`);
+          statements.push(column.addColumnDdl);
         } else {
           createdTable.columns.delete(column.name);
         }
@@ -309,26 +339,6 @@ export async function updateSchema(
     await operation.promise();
     console.log(`Updated database ${databaseId} version ${versionId}.`);
 
-    await databaseClient.runTransactionAsync(async (transction) => {
-      await transction.run({
-        sql: `UPDATE SchemaImage SET state = @state WHERE versionId = @versionId`,
-        params: {
-          versionId: `${versionId}`,
-          state: `${SchemaState.DONE}`,
-        },
-        types: {
-          versionId: {
-            type: "int64",
-          },
-          state: {
-            type: "int64",
-          },
-        },
-      });
-      await transction.commit();
-      console.log(
-        `Marked database ${databaseId} version ${versionId} update done.`,
-      );
-    });
+    await markSchemaImageUpdateDone(databaseClient, databaseId, versionId);
   }
 }
