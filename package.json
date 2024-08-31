@@ -1,6 +1,6 @@
 {
   "name": "@selfage/spanner_schema_update_cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Code generation for message, observable, service, and etc.",
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
     "!test_suite.*"
   ],
   "devDependencies": {
-    "@selfage/bundler_cli": "^5.1.6",
+    "@selfage/bundler_cli": "^5.1.7",
     "@selfage/cli": "^5.0.0",
     "@selfage/generator_cli": "^1.5.0",
     "@selfage/test_matcher": "^2.0.0",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@google-cloud/spanner": "^7.14.0",
-    "@selfage/message": "^3.5.2",
+    "@selfage/message": "^3.5.3",
     "commander": "^12.1.0"
   }
 }
