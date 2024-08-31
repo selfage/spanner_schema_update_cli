@@ -20,7 +20,7 @@ async function execute(): Promise<void> {
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1",
+    "./test_data/schema_v1.json",
   );
 
   // Verify
@@ -77,7 +77,7 @@ async function execute(): Promise<void> {
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1",
+    "./test_data/schema_v1.json",
   );
 
   // Verify no update
@@ -101,7 +101,7 @@ async function execute(): Promise<void> {
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v2",
+    "./test_data/schema_v2.json",
   );
 
   // Verify
@@ -221,7 +221,7 @@ async function execute(): Promise<void> {
     PROJECT_ID,
     INSTANCE_ID,
     DATABASE_ID,
-    "./test_data/schema_v1",
+    "./test_data/schema_v1.json",
   );
 
   // Verify
