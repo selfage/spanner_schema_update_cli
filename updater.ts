@@ -55,7 +55,7 @@ async function insertNewSchemaImage(
       sql: `INSERT SchemaImage (versionId, schema, state) VALUES (@versionId, @schema, @state)`,
       params: {
         versionId: Spanner.float(versionId),
-        schema: Buffer.from(serializeMessage(schemaDdl, SCHEMA_DDL)),
+        schema: Buffer.from(serializeMessage(schemaDdl, SCHEMA_DDL).buffer),
         state: Spanner.float(SchemaState.PENDING),
       },
       types: {
