@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs = require("fs");
 import path = require("path");
+import { runEmulator } from "./emulator_runner";
 import { updateSchemaFromDdlFile } from "./updater";
 import { Command } from "commander";
 
@@ -21,7 +22,6 @@ async function main(): Promise<void> {
   program.version(packageConfig.version);
   program
     .command("update <ddlFile>")
-    .alias("srl")
     .description(
       `Update Spanner database schema from a generated DDL JSON file.`,
     )
@@ -31,14 +31,23 @@ async function main(): Promise<void> {
       "-d, --database-id <id>",
       `The spanner database id inside the Spanner instance.`,
     )
+    .option("-l, --local", "Whether to connect to local Spanner emulator.")
     .action((ddlFile, options) =>
       updateSchemaFromDdlFile(
         options.projectId,
         options.instanceId,
         options.databaseId,
         stripFileExtension(ddlFile) + ".json",
+        options.local,
       ),
     );
+  program
+    .command("runLocalEmulator <ddlFile>")
+    .alias("rle")
+    .description(
+      `Start Spanner's local emulator with a schema defined by the provided DDL JSON file.`,
+    )
+    .action((ddlFile) => runEmulator(ddlFile));
   await program.parseAsync();
 }
 
