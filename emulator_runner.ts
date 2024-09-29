@@ -25,16 +25,28 @@ export async function runEmulator(ddlFile: string): Promise<void> {
   await promisifyProcess(
     exec(
       `gcloud spanner instances create ${INSTANCE_ID} --config=emulator-config --description="Test Instance" --nodes=1`,
+      (error, stdout, stderr) => {
+        console.log(stdout);
+        console.error(stderr);
+      },
     ),
   );
   await promisifyProcess(
     exec(
       `gcloud spanner database create ${DATABASE_ID} --instance=${INSTANCE_ID}`,
+      (error, stdout, stderr) => {
+        console.log(stdout);
+        console.error(stderr);
+      },
     ),
   );
   await promisifyProcess(
     exec(
       `npx spanage update ${ddlFile} -p ${PROJECT_ID} -i ${INSTANCE_ID} -d ${DATABASE_ID} -l`,
+      (error, stdout, stderr) => {
+        console.log(stdout);
+        console.error(stderr);
+      },
     ),
   );
   await spannerEmulator;
