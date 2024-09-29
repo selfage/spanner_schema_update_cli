@@ -1,5 +1,4 @@
 import fs = require("fs");
-import { SPANNER_EMULATOR_HOST } from "./constants";
 import { SCHEMA_DDL, SchemaDdl } from "./schema_ddl";
 import { Database, Spanner } from "@google-cloud/spanner";
 import { DatabaseAdminClient } from "@google-cloud/spanner/build/src/v1";
@@ -135,10 +134,10 @@ export async function updateSchemaFromDdlFile(
   instanceId: string,
   databaseId: string,
   ddlFile: string,
-  local?: boolean,
+  spannerEmulatorHost?: string,
 ): Promise<void> {
-  if (local) {
-    process.env.SPANNER_EMULATOR_HOST = SPANNER_EMULATOR_HOST;
+  if (spannerEmulatorHost) {
+    process.env.SPANNER_EMULATOR_HOST = spannerEmulatorHost;
   }
   let newSchemaDdl = parseMessage(
     JSON.parse(fs.readFileSync(ddlFile).toString()),
