@@ -30,17 +30,12 @@ async function main(): Promise<void> {
       "-d, --database-id <id>",
       `The spanner database id inside the Spanner instance.`,
     )
-    .option(
-      "-h, --spanner-emulator-host",
-      "The host address to connect to local Spanner emulator.",
-    )
     .action((ddlFile, options) =>
       updateSchemaFromDdlFile(
         options.projectId,
         options.instanceId,
         options.databaseId,
         stripFileExtension(ddlFile) + ".json",
-        options.spannerEmulatorHost,
       ),
     );
   await program.parseAsync();

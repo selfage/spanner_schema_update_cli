@@ -134,11 +134,7 @@ export async function updateSchemaFromDdlFile(
   instanceId: string,
   databaseId: string,
   ddlFile: string,
-  spannerEmulatorHost?: string,
 ): Promise<void> {
-  if (spannerEmulatorHost) {
-    process.env.SPANNER_EMULATOR_HOST = spannerEmulatorHost;
-  }
   let newSchemaDdl = parseMessage(
     JSON.parse(fs.readFileSync(ddlFile).toString()),
     SCHEMA_DDL,
