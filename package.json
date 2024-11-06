@@ -31,12 +31,12 @@
     "!test_suite.*"
   ],
   "devDependencies": {
-    "@selfage/bundler_cli": "^5.1.7",
+    "@selfage/bundler_cli": "^5.2.0",
     "@selfage/cli": "^5.0.1",
-    "@selfage/generator_cli": "^3.2.0",
+    "@selfage/generator_cli": "^3.2.1",
     "@selfage/test_matcher": "^2.1.8",
     "@selfage/tsconfig": "^1.1.0",
-    "@types/node": "^22.5.0"
+    "@types/node": "^22.9.0"
   },
   "dependencies": {
     "@google-cloud/spanner": "^7.15.0",
