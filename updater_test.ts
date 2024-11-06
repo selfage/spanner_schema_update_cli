@@ -67,7 +67,7 @@ async function execute(): Promise<void> {
     assertThat(table.table_name, eq("Singers"), "Table Singers created");
     assertThat(
       table.column_names,
-      isArray([eq("SingerId"), eq("FirstName")]),
+      isArray([eq("FirstName"), eq("SingerId")]),
       "Singers's columns created",
     );
   }
