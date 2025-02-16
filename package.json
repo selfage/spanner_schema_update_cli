@@ -1,7 +1,7 @@
 {
   "name": "@selfage/spanner_schema_update_cli",
-  "version": "1.4.2",
-  "description": "Code generation for message, observable, service, and etc.",
+  "version": "1.4.3",
+  "description": "Update Spanner schema.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/selfage/spanner_schema_update_cli.git"
@@ -14,7 +14,7 @@
     "SQL",
     "TypeScript"
   ],
-  "author": "Yuxuan Xie <teststaybaka@gmail.com> (http://www.yuxuanxie.com)",
+  "author": "Yuxuan Xie <ykuyo.dev@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/selfage/spanner_schema_update_cli/issues"
@@ -31,16 +31,16 @@
     "!test_suite.*"
   ],
   "devDependencies": {
-    "@selfage/bundler_cli": "^5.2.0",
+    "@selfage/bundler_cli": "^5.3.0",
     "@selfage/cli": "^5.0.1",
-    "@selfage/generator_cli": "^3.2.1",
-    "@selfage/test_matcher": "^2.1.8",
+    "@selfage/generator_cli": "^4.1.0",
+    "@selfage/test_matcher": "^2.1.10",
     "@selfage/tsconfig": "^1.1.0",
     "@types/node": "^22.9.0"
   },
   "dependencies": {
-    "@google-cloud/spanner": "^7.15.0",
-    "@selfage/message": "^3.5.6",
+    "@google-cloud/spanner": "^7.18.1",
+    "@selfage/message": "^3.5.7",
     "commander": "^12.1.0"
   }
 }
