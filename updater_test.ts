@@ -1,6 +1,6 @@
 import { SchemaState, updateSchemaFromDdlFile } from "./updater";
 import { Spanner } from "@google-cloud/spanner";
-import { assertThat, eq, isArray } from "@selfage/test_matcher";
+import { assertThat, eq, isUnorderedArray } from "@selfage/test_matcher";
 
 let PROJECT_ID = process.env.PROJECT_ID;
 let INSTANCE_ID = process.env.INSTANCE_ID;
@@ -67,7 +67,7 @@ async function execute(): Promise<void> {
     assertThat(table.table_name, eq("Singers"), "Table Singers created");
     assertThat(
       table.column_names,
-      isArray([eq("FirstName"), eq("SingerId")]),
+      isUnorderedArray([eq("FirstName"), eq("SingerId")]),
       "Singers's columns created",
     );
   }
@@ -156,7 +156,7 @@ async function execute(): Promise<void> {
     let columns = rows.map((row) => row.at(0).value);
     assertThat(
       columns,
-      isArray([eq("SingerId"), eq("FirstName"), eq("LastName")]),
+      isUnorderedArray([eq("SingerId"), eq("FirstName"), eq("LastName")]),
       "Singers V2 columns",
     );
 
@@ -176,7 +176,7 @@ async function execute(): Promise<void> {
     let indexes = rows.map((row) => row.at(0).value);
     assertThat(
       indexes,
-      isArray([eq("SingersByFirstName"), eq("SingersByLastName")]),
+      isUnorderedArray([eq("SingersByFirstName"), eq("SingersByLastName")]),
       "Singers V2 indexes",
     );
 
@@ -195,7 +195,7 @@ async function execute(): Promise<void> {
     columns = rows.map((row) => row.at(0).value);
     assertThat(
       columns,
-      isArray([eq("SingerId"), eq("AlbumId"), eq("AlbumTitle")]),
+      isUnorderedArray([eq("SingerId"), eq("AlbumId"), eq("AlbumTitle")]),
       "Albums V2 columns",
     );
 
@@ -213,7 +213,11 @@ async function execute(): Promise<void> {
     });
     assertThat(rows.length, eq(1), "1 index of Albums");
     indexes = rows.map((row) => row.at(0).value);
-    assertThat(indexes, isArray([eq("AlbumsByTitle")]), "Albums V2 indexes");
+    assertThat(
+      indexes,
+      isUnorderedArray([eq("AlbumsByTitle")]),
+      "Albums V2 indexes",
+    );
   }
 
   // Execute
@@ -278,7 +282,7 @@ async function execute(): Promise<void> {
     let columns = rows.map((row) => row.at(0).value);
     assertThat(
       columns,
-      isArray([eq("SingerId"), eq("FirstName")]),
+      isUnorderedArray([eq("SingerId"), eq("FirstName")]),
       "Singers V3 columns",
     );
 
