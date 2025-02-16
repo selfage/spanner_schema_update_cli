@@ -12,12 +12,12 @@ steps:
   - 'INSTANCE_ID=${_INSTANCE_ID}'
   - 'DATABASE_ID=${_DATABASE_ID}'
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['spanner', 'instances', 'delete', '${_INSTANCE_ID}']
+  args: ['spanner', 'instances', 'delete', '${_INSTANCE_ID}', '--quiet']
 - name: node:20.12.1
   entrypoint: npx
   args: ['bundage', 'bfn', 'main', 'main_bin', '-t', 'bin']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/spanner_schema_update_cli', '.', '--quiet']
+  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/spanner_schema_update_cli', '.']
 images: ['gcr.io/${PROJECT_ID}/spanner_schema_update_cli']
 options:
   logging: CLOUD_LOGGING_ONLY
