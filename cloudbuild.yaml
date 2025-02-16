@@ -2,6 +2,10 @@ steps:
 - name: node:20.12.1
   entrypoint: npm
   args: ['install']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['spanner', 'instances', 'create', '${_INSTANCE_ID}', '--config=regional-us-central1', '--description=${_INSTANCE_ID}', '--edition=STANDARD', '--processing-units=100']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['spanner', 'databases', 'create', '${_DATABASE_ID}', '--instance=${_INSTANCE_ID}']
 - name: node:20.12.1
   entrypoint: npx
   args: ['selfage', 'run', 'updater_test']
@@ -9,6 +13,8 @@ steps:
   - 'PROJECT_ID=${PROJECT_ID}'
   - 'INSTANCE_ID=${_INSTANCE_ID}'
   - 'DATABASE_ID=${_DATABASE_ID}'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['spanner', 'instances', 'delete', '${_INSTANCE_ID}']
 - name: node:20.12.1
   entrypoint: npx
   args: ['bundage', 'bfn', 'main', 'main_bin', '-t', 'bin']
