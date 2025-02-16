@@ -5,5 +5,3 @@ COPY package.json .
 COPY package-lock.json .
 COPY main_bin.js .
 RUN npm install --production
-
-ENTRYPOINT ["node", "main_bin.js"]
