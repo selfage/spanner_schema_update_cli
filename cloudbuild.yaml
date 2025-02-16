@@ -17,7 +17,7 @@ steps:
   entrypoint: npx
   args: ['bundage', 'bfn', 'main', 'main_bin', '-t', 'bin']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/spanner_schema_update_cli', '.']
+  args: ['build', '-t', 'gcr.io/${PROJECT_ID}/spanner_schema_update_cli', '.', '--quiet']
 images: ['gcr.io/${PROJECT_ID}/spanner_schema_update_cli']
 options:
   logging: CLOUD_LOGGING_ONLY
